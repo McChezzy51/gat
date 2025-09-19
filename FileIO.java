@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.IOException;
 
 public class FileIO {
     // Makes a directory within the current working directory (usually gat/).
@@ -14,6 +15,15 @@ public class FileIO {
     // Makes the specified file in the current working directory (usually gat/).
     // Returns true if succeeded
     public static boolean makeFile(String fileName) {
-
+        File file = new File(fileName);
+        if (file.exists()) {
+            return false;
+        }
+        try {
+            return file.createNewFile();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 }
