@@ -19,7 +19,37 @@ public class gat {
         String fileContents = FileIO.readFile(filePath);
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
+            // Get SHA-1 byte array
             digest.update(fileContents.getBytes("UTF-8"), 0, fileContents.length());
+            // Convert byte array to hexadecimal
+            return byteArrayToHex(digest.digest());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
         }
+    }
+
+    public static String byteArrayToHex(byte[] byteArray) {
+        // Use a StringBuilder to optimize performance
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < byteArray.length; i++) {
+            byte num = byteArray[i];
+            // Hexadecimal is a base-16 number system. It takes 4 bits to have a range of 16 numbers.
+            // A byte has 8 bits. Thus, each byte contains two hexadecimal characters' worth of data.
+            char[] hexDigits = new char[2];
+            // The >> operation takes all the bits in the byte and shifts them down 4 spots.
+            // For instance, 10010110 becomes 00001001.
+            // The & operation takes all the bits and compares them one by one to 0xF (corresponding to the bits 00001111).
+            // Only if a bit is 1 and the corresponding bit is 1 in 0xF, will the resulting byte have a 1 in that position.
+            // This effectively sets the first four bits to 0, as we only care about the last 4.
+            // For example: 10010110 & 0xF = 00000110
+            // Character.forDigit turns the digit into a character in any number system; again, hexadecimal is base 16.
+            hexDigits[0] = Character.forDigit((num >> 4) & 0xF, 16);
+            // We have already converted the first 4 bits into hex; now, we convert the second 4 bits.
+            hexDigits[1] = Character.forDigit((num & 0xF), 16);
+            String curString = new String(hexDigits);
+            sb.append(curString);
+        }
+        return sb.toString();
     }
 }
