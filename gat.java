@@ -1,3 +1,4 @@
+import java.io.File;
 import java.security.MessageDigest;
 
 public class gat {
@@ -14,13 +15,12 @@ public class gat {
         System.out.println("Git Repository Created");
     }
 
-    // Retrieve's a file's contents and hashes them
-    public static String SHA1(String filePath) {
-        String fileContents = FileIO.readFile(filePath);
+    // Gets the SHA-1 hash for the string dataToHash
+    public static String SHA1(String dataToHash) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
             // Get SHA-1 byte array
-            digest.update(fileContents.getBytes("UTF-8"), 0, fileContents.length());
+            digest.update(dataToHash.getBytes("UTF-8"), 0, dataToHash.length());
             // Convert byte array to hexadecimal
             return byteArrayToHex(digest.digest());
         } catch (Exception e) {
@@ -51,5 +51,25 @@ public class gat {
             sb.append(curString);
         }
         return sb.toString();
+    }
+
+    // Creates a BLOB for the file in the given filePath and stores it in git/objects
+    // The BLOB's name is the SHA-1 hash of the file's contents
+    // The BLOB's contents are identical to the file's contents
+    public static void createBLOB(String filePath) {
+        String fileContents = FileIO.readFile(filePath);
+        if (fileContents == null) {
+            System.out.println("Failed to read file!");
+            return;
+        }
+        String fileHash = SHA1(fileContents);
+        if (fileHash == null) {
+            System.out.println("Failed to hash file contents!");
+            return;
+        }
+        if (!FileIO.writeToFile("git/objects/" + fileHash, fileContents)) {
+            System.out.println("Failed to write to file!");
+            return;
+        }
     }
 }

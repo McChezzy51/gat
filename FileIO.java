@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -28,6 +30,19 @@ public class FileIO {
             return file.createNewFile();
         } catch (IOException e) {
             System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    // Writes the specified content to the file referenced by fileName
+    // If there is no such file with name fileName, the file is first created
+    // Returns true if succeeded in writing the data, false otherwise
+    public static boolean writeToFile(String fileName, String content) {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName))) {
+            bufferedWriter.write(content);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
     }
