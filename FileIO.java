@@ -35,10 +35,25 @@ public class FileIO {
     }
 
     // Writes the specified content to the file referenced by fileName
+    // NOTE: any data previously in the file will be deleted!
     // If there is no such file with name fileName, the file is first created
     // Returns true if succeeded in writing the data, false otherwise
     public static boolean writeToFile(String fileName, String content) {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName))) {
+            bufferedWriter.write(content);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Appends the specified content to the file referenced by fileName
+    // NOTE: any data previously in the file will NOT be deleted!
+    // If there is no such file with name fileName, the file is first created
+    // Returns true if succeeded in writing the data, false otherwise
+    public static boolean appendToFile(String fileName, String content) {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName, true))) {
             bufferedWriter.write(content);
             return true;
         } catch (IOException e) {

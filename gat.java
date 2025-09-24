@@ -72,4 +72,18 @@ public class gat {
             return;
         }
     }
+
+    // Adds the file referenced by filePath to the index
+    public static void stageFile(String filePath) {
+        String fileContents = FileIO.readFile(filePath);
+        String fileHash = SHA1(fileContents);
+        String dataToAppend = "";
+        // If the index is empty, we don't want to begin with a newline
+        if (!FileIO.readFile("git/index").equals("")) {
+            dataToAppend += "\n";
+        }
+        // Format is [hash] [file_name]
+        dataToAppend += fileHash + " " + filePath;
+        FileIO.appendToFile("git/index", dataToAppend);
+    }
 }
