@@ -1,5 +1,10 @@
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class FileIO {
     // Makes a directory within the current working directory (usually gat/).
@@ -24,6 +29,17 @@ public class FileIO {
         } catch (IOException e) {
             System.out.println(e.getMessage());
             return false;
+        }
+    }
+
+    // Reads the specified file
+    // Returns the file's contents, or null if reading failed
+    public static String readFile(String fileName) {
+        try {
+            return new String(Files.readAllBytes(Paths.get(fileName)), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
         }
     }
 }
