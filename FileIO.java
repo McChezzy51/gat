@@ -41,6 +41,7 @@ public class FileIO {
     public static boolean writeToFile(String fileName, String content) {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName))) {
             bufferedWriter.write(content);
+            bufferedWriter.close();
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -55,6 +56,7 @@ public class FileIO {
     public static boolean appendToFile(String fileName, String content) {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName, true))) {
             bufferedWriter.write(content);
+            bufferedWriter.close();
             return true;
         } catch (IOException e) {
             e.printStackTrace();
