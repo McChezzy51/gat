@@ -1,7 +1,32 @@
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOError;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 public class gat {
+    private static boolean compressData = false;
+
+    public static void setCompressData(boolean shouldCompressData) {
+        compressData = shouldCompressData;
+    }
+
+    public static boolean getCompressData() {
+        return compressData;
+    }
+
     // Creates all the necessary files and directories in ./git/
     public static void initializeRepo() {
         boolean madeGit = FileIO.makeDirectory("git");
@@ -67,9 +92,13 @@ public class gat {
             System.out.println("Failed to hash file contents!");
             return;
         }
-        if (!FileIO.writeToFile("git/objects/" + fileHash, fileContents)) {
-            System.out.println("Failed to write to file!");
-            return;
+        if (compressData) {
+            compressData(filePath, fileHash);
+        } else {
+            if (!FileIO.writeToFile("git/objects/" + fileHash, fileContents)) {
+                System.out.println("Failed to write to file!");
+                return;
+            }
         }
     }
 
@@ -85,5 +114,25 @@ public class gat {
         // Format is [hash] [file_name]
         dataToAppend += fileHash + " " + filePath;
         FileIO.appendToFile("git/index", dataToAppend);
+    }
+    
+    // Compresses a file using ZLIB compression
+    // QUESTION: should the file's hash be generated on the compressed or the uncompressed data??
+    public static void compressData(String inputFile, String outputFile) {
+        try {
+            String zipFileName = "git/objects/" + outputFile;
+
+            FileOutputStream fos = new FileOutputStream(zipFileName);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+
+            zos.putNextEntry(new ZipEntry(outputFile));
+
+            byte[] bytes = Files.readAllBytes(Paths.get(inputFile));
+            zos.write(bytes, 0, bytes.length);
+            zos.closeEntry();
+            zos.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

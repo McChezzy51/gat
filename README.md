@@ -3,6 +3,7 @@
 Provides a few helper functions to easily work with directories and files.
 ## gat.java
 Provides git-related functions, like initializing the repository (`void initializeRepo()`), generating a file's hash code (`String SHA1(String filePath)`), and some helper functions (`String byteArrayToHex(byte[] byteArray)`). The `SHA1()` function works by utilizing `java.security.MessageDigest` to generate a SHA-1 code in the form of a byte array, then converting that array into its hexadecimal representation in string form.
+File compression can be enabled/disabled with `setCompressData`. When set to true, calls to `createBLOB` will compress file data using zip compression before writing to the BLOB.
 
 `void stageFile(String filePath)` will add a file name and its hash to the git index file for staging.
 ## InitializationTester.java
