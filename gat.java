@@ -54,6 +54,19 @@ public class gat {
         }
     }
 
+    public static String SHA1(byte[] dataToHash) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-1");
+            // Get SHA-1 byte array
+            digest.update(dataToHash, 0, dataToHash.length);
+            // Convert byte array to hexadecimal
+            return byteArrayToHex(digest.digest());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
     public static String byteArrayToHex(byte[] byteArray) {
         // Use a StringBuilder to optimize performance
         StringBuilder sb = new StringBuilder();
@@ -82,23 +95,37 @@ public class gat {
     // The BLOB's name is the SHA-1 hash of the file's contents
     // The BLOB's contents are identical to the file's contents
     public static void createBLOB(String filePath) {
-        String fileContents = FileIO.readFile(filePath);
-        if (fileContents == null) {
-            System.out.println("Failed to read file!");
-            return;
-        }
-        String fileHash = SHA1(fileContents);
-        if (fileHash == null) {
-            System.out.println("Failed to hash file contents!");
-            return;
-        }
-        if (compressData) {
-            compressData(filePath, fileHash);
-        } else {
-            if (!FileIO.writeToFile("git/objects/" + fileHash, fileContents)) {
-                System.out.println("Failed to write to file!");
-                return;
+        try {
+            if (compressData) {
+                byte[] compressed = compressData(filePath);
+                if (compressed == null) {
+                    System.out.println("Failed to read file!");
+                    return;
+                }
+                String fileHash = SHA1(compressed);
+                if (fileHash == null) {
+                    System.out.println("Failed to hash file contents!");
+                    return;
+                }
+                Files.write(Paths.get("git/objects/" + fileHash), compressed);
+            } else {
+                String fileContents = FileIO.readFile(filePath);
+                if (fileContents == null) {
+                    System.out.println("Failed to read file!");
+                    return;
+                }
+                String fileHash = SHA1(fileContents);
+                if (fileHash == null) {
+                    System.out.println("Failed to hash file contents!");
+                    return;
+                }
+                if (!FileIO.writeToFile("git/objects/" + fileHash, fileContents)) {
+                    System.out.println("Failed to write to file!");
+                    return;
+                }
             }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -117,22 +144,21 @@ public class gat {
     }
     
     // Compresses a file using ZLIB compression
-    // QUESTION: should the file's hash be generated on the compressed or the uncompressed data??
-    public static void compressData(String inputFile, String outputFile) {
+    public static byte[] compressData(String inputFile) {
         try {
-            String zipFileName = "git/objects/" + outputFile;
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ZipOutputStream zos = new ZipOutputStream(bos);
 
-            FileOutputStream fos = new FileOutputStream(zipFileName);
-            ZipOutputStream zos = new ZipOutputStream(fos);
-
-            zos.putNextEntry(new ZipEntry(outputFile));
+            zos.putNextEntry(new ZipEntry("compressed"));
 
             byte[] bytes = Files.readAllBytes(Paths.get(inputFile));
             zos.write(bytes, 0, bytes.length);
             zos.closeEntry();
             zos.close();
+            return bos.toByteArray();
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            return null;
         }
     }
 }
