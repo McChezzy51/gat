@@ -1,8 +1,19 @@
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOError;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
+import java.util.zip.DeflaterOutputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class gat {
@@ -150,45 +161,4 @@ public class gat {
             return null;
         }
     }
-    
-    public static void createTree() {
-    String index = FileIO.readFile("git/index");
-
-    if (index == null || index.trim().isEmpty()) {
-        System.out.println("Index empty");
-        return;
-    }
-
-    // Take only the first staged entry
-    String first = index.split("\\R")[0].trim();
-
-    int sp = first.indexOf(' ');
-    if (sp <= 0 || sp >= first.length() - 1) {
-        System.out.println("incorrect index entry");
-        return;
-    }
-
-    // Extract the blob SHA-1 and the original file path
-    String blobSha = first.substring(0, sp);
-    String path = first.substring(sp + 1);
-
-    // Build the tree contents for a single file entry
-    // "blob <sha> <filename-or-path>"
-    String contents = "blob " + blobSha + " " + path;
-
-    // Hash the tree contents to produce the tree object's filename
-    String treeSha = SHA1(contents);
-    if (treeSha == null) {
-        System.out.println("Failed to hash tree contents.");
-        return;
-    }
-
-    // Write the tree object into git/objects/<treeSha>
-    if (!FileIO.writeToFile("git/objects/" + treeSha, contents)) {
-        System.out.println("Failed to write tree object.");
-        return;
-    }
-
-    System.out.println("Tree created: " + treeSha);
-}
 }
