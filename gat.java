@@ -9,8 +9,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -161,4 +166,62 @@ public class gat {
             return null;
         }
     }
+
+    public static String createTree(String indexPath) {
+        File indexFile = new File(indexPath);
+        if (!indexFile.exists()) {
+            System.out.println("No index file found at " + indexPath);
+            return null;
+        }
+    
+        try {
+            // working list and directory structure
+            List<String> workingList = FileIO.buildWorkingList(indexFile);
+            Map<String, List<String>> dirMap = FileIO.groupByParentDirectory(workingList);
+            List<String> directories = FileIO.sortDirectoriesByDepth(dirMap);
+    
+            // build trees recursively from the deepest level first
+            Map<String, String> treeHashes = new HashMap<>();
+    
+            for (String dir : directories) {
+                StringBuilder content = new StringBuilder();
+                List<String> entries = dirMap.get(dir);
+    
+                // add blob entries
+                for (int i = 0; i < entries.size(); i++) {
+                    String entry = entries.get(i);
+                    String[] parts = entry.split(" ");
+                    String type = parts[0];
+                    String sha = parts[1];
+                    String name = new File(parts[2]).getName();
+    
+                    if (i > 0) content.append("\n");
+                    content.append(type).append(" ").append(sha).append(" ").append(name);
+                }
+    
+                // add subtree entries 
+                for (Map.Entry<String, String> sub : treeHashes.entrySet()) {
+                    if (!sub.getKey().isEmpty() && sub.getKey().startsWith(dir) &&
+                        sub.getKey().split("/").length == dir.split("/").length + 1) {
+    
+                        if (content.length() > 0) content.append("\n");
+                        String folderName = new File(sub.getKey()).getName();
+                        content.append("tree ").append(sub.getValue()).append(" ").append(folderName);
+                    }
+                }
+    
+                // write tree object and record its hash
+                String treeSHA = FileIO.writeTreeObject(content.toString());
+                treeHashes.put(dir, treeSHA);
+            }
+    
+            // Step 4: return the top-level tree hash
+            return treeHashes.getOrDefault("", null);
+    
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }    
+    
 }
