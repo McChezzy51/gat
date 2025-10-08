@@ -11,7 +11,6 @@ public class StageAndCommitTester {
         }
         FileIO.writeToFile(syd, "the is the sydney file");
         Git.stage(syd);
-        Git.commit("Sydney Assil", "Staging first file!");
 
         //Checking if stage works on a file inside a folder
         String peeps = "People";
@@ -26,8 +25,13 @@ public class StageAndCommitTester {
         }
         FileIO.writeToFile(joe, "the is the joe file");
         Git.stage(joe);
+        Git.commit("Sydney Assil", "First commit");
 
-        //IndexTester.resetRepository();
+        IndexTester.resetRepository();
+        //TO-DO TALK TO THEISS: 
+        //Different sha1 for commits...
+        //Should I get rid of "working" and fix format of tree storing? + Comitting isn't storing files...
+        
 
     }
 
