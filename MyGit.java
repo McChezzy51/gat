@@ -3,10 +3,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 
-public class Git {
+public class MyGit {
 
-    public static void initialize() {
+    public static void init() {
         gat.initializeRepo();
+        commit("Sydney Assil", "initial commit");
     }
 
     public static void stage(String filePath) {
@@ -22,8 +23,14 @@ public class Git {
                 + "\nauthor: " + author
                 + "\ndate: " + LocalDate.now()
                 + "\nmessage: " + message);
-        String sha1 = gat.SHA1("commit");
+        String sha1 = gat.SHA1(FileIO.readFile("commit"));
         FileIO.writeToFile("git/HEAD", sha1);
-        stage("commit");
+        gat.createBLOB("commit");
+        commit.delete();
+    }
+
+    public static void checkout(String sha1) {
+        File commit = new File("git/objects/" + sha1);
+        
     }
 }

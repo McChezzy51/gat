@@ -3,6 +3,10 @@ import java.io.*;
 public class StageAndCommitTester {
     public static void main(String[] args) throws IOException {
         
+        IndexTester.resetRepository();
+        
+        MyGit.init();
+
         //Checking if stage works on a file in the working directory
         String syd = "Sydney";
         File s = new File(syd);
@@ -10,7 +14,9 @@ public class StageAndCommitTester {
             s.createNewFile();
         }
         FileIO.writeToFile(syd, "the is the sydney file");
-        Git.stage(syd);
+        MyGit.stage(syd);
+        MyGit.commit("Sydney Assil", "First commit");
+
 
         //Checking if stage works on a file inside a folder
         String peeps = "People";
@@ -24,13 +30,12 @@ public class StageAndCommitTester {
             j.createNewFile();
         }
         FileIO.writeToFile(joe, "the is the joe file");
-        Git.stage(joe);
-        Git.commit("Sydney Assil", "First commit");
+        MyGit.stage(joe);
+        MyGit.commit("Sydney Assil", "Second commit");
 
-        IndexTester.resetRepository();
+        
         //TO-DO TALK TO THEISS: 
-        //Different sha1 for commits...
-        //Should I get rid of "working" and fix format of tree storing? + Comitting isn't storing files...
+        //When I commit twice, there is the og root directory and the new root directory in objects
         
 
     }

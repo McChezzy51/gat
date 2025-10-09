@@ -61,18 +61,6 @@ public class gat {
         }
     }
 
-    public static String SHA1(File f) throws IOException {
-        String filePath = f.getPath();
-        BufferedReader reader = new BufferedReader(new FileReader(filePath));
-        String data = "";
-        String line;
-        while ((line = reader.readLine()) != null) {
-            data += line;
-        }
-        reader.close();
-        return SHA1(data);
-    }
-
     public static String SHA1(byte[] dataToHash) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
