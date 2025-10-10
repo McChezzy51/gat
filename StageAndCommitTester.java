@@ -4,7 +4,7 @@ public class StageAndCommitTester {
     public static void main(String[] args) throws IOException {
         
         IndexTester.resetRepository();
-        MyGit git = new MyGit();
+        GitWrapper git = new GitWrapper();
         
         git.init();
 

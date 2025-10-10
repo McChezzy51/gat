@@ -3,9 +3,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 
-public class MyGit implements GitInterface{
+public class GitWrapper {
     
-
     public void init() {
         gat.initializeRepo();
         commit("Sydney Assil", "initial commit");

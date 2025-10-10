@@ -14,3 +14,7 @@ A small file to ensure that our SHA-1 hashing function works properly.
 This file creates a BLOB for README.md, checks its contents against the original README.md, then deletes the BLOB to test our BLOB generation functions.
 ## IndexTester.java
 First, the `main` function in this file runs `void resetRepository()`, which deletes all BLOB and test .txt files and clears the index file. Then it creates a few test .txt files, stages them, generates their blobs, then checks the index file and ensures the index file points to the correct BLOBs and original files. It compares the contents of the BLOBs and the original .txt files to ensure they are the same.
+
+## Final Step
+I coded init(), stage(), and commit() and they all work! I found previous bugs: the createTree method does not work (it only stages the root directory, no subdirectories), and nor does the treetester.
+Use the StageAndCommitTester to use the GitWrapper methods 
