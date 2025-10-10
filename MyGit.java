@@ -3,19 +3,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 
-public class MyGit {
+public class MyGit implements GitInterface{
+    
 
-    public static void init() {
+    public void init() {
         gat.initializeRepo();
         commit("Sydney Assil", "initial commit");
     }
 
-    public static void stage(String filePath) {
+    public void stage(String filePath) {
         gat.createBLOB(filePath);
         gat.stageFile(filePath);
     }
 
-    public static void commit(String author, String message) {
+    public String commit(String author, String message) {
         gat.createTree("git/index");
         File commit = new File("commit");
         FileIO.writeToFile("commit", "tree: " + gat.createTree("git/index")
@@ -27,5 +28,6 @@ public class MyGit {
         FileIO.writeToFile("git/HEAD", sha1);
         gat.createBLOB("commit");
         commit.delete();
+        return sha1;
     }
 }

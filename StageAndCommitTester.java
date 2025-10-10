@@ -4,8 +4,9 @@ public class StageAndCommitTester {
     public static void main(String[] args) throws IOException {
         
         IndexTester.resetRepository();
+        MyGit git = new MyGit();
         
-        MyGit.init();
+        git.init();
 
         //Checking if stage works on a file in the working directory
         String syd = "Sydney";
@@ -14,8 +15,8 @@ public class StageAndCommitTester {
             s.createNewFile();
         }
         FileIO.writeToFile(syd, "the is the sydney file");
-        MyGit.stage(syd);
-        MyGit.commit("Sydney Assil", "First commit");
+        git.stage(syd);
+        git.commit("Sydney Assil", "First commit");
 
 
         //Checking if stage works on a file inside a folder
@@ -30,14 +31,9 @@ public class StageAndCommitTester {
             j.createNewFile();
         }
         FileIO.writeToFile(joe, "the is the joe file");
-        MyGit.stage(joe);
-        MyGit.commit("Sydney Assil", "Second commit");
-
+        git.stage(joe);
+        git.commit("Sydney Assil", "Second commit");
         
-        //TO-DO TALK TO THEISS: 
-        //When I commit twice, there is the og root directory and the new root directory in objects
-        
-
     }
 
 }
