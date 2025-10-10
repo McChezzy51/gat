@@ -55,6 +55,7 @@ public class IndexTester {
                 curObject.delete();
             }
         }
+        FileIO.writeToFile("git/HEAD", "");
         // Clear index file
         // A FileWriter will by default overwrite all existing contents with the new contents
         // Thus, writing an empty string will clear the file
