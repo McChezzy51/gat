@@ -28,9 +28,4 @@ public class MyGit {
         gat.createBLOB("commit");
         commit.delete();
     }
-
-    public static void checkout(String sha1) {
-        File commit = new File("git/objects/" + sha1);
-        
-    }
 }
